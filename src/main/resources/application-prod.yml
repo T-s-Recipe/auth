@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: auth
+  data:
+    redis:
+      repositories:
+        enabled: false
+
+server:
+  port: 8010
+
+redis:
+  host: redis
+
+jwt:
+  issuer: ${JWT_ISSUER}
+  secret-key: ${JWT_SECRET}
+
+external-service-url:
+  member: "http://member:8020"
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      member-service:
+        register-health-indicator: true
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+        ignore-exceptions:
+          - shop.tsrecipe.auth.exception.BaseException
+
+oauth-provider:
+  provider-map:
+    google:
+      client-id: ${ANDROID_CLIENT_ID}
+      jwks-uri: "https://www.googleapis.com/oauth2/v3/certs"
+      issuer: "https://accounts.google.com"
+    apple:
+      client-id: ${IOS_CLIENT_ID}
+      jwks-uri: "https://appleid.apple.com/auth/keys"
+      issuer: "https://appleid.apple.com"

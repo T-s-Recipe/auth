@@ -1,0 +1,54 @@
+# Compiled class files
+*.class
+*.jar
+*.war
+*.ear
+
+# IntelliJ IDEA specific
+.idea/
+*.iml
+*.iws
+out/
+.idea_modules/
+*.ipr
+
+# Gradle specific
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+gradle-app.setting
+bin/
+gradle.log
+
+# Kotlin compiler
+.kotlin_build/
+
+# Maven specific
+target/
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+.DS_Store
+*~
+
+# Spring Boot specific
+*.env
+.env.*
+.restart/
+
+# Logs
+*.log
+logs/
+*.pid
+
+# macOS specific
+*.DS_Store
+
+# Editor folders
+.vscode/
+
+# Exclude local config and dockerfiles
+/src/main/resources/application-local.yml
+Dockerfile.local
