@@ -34,8 +34,8 @@ jobs:
 
           docker build \
           --build-arg PROFILE=$TAG \
-          --build-arg ANDROID_CLIENT_ID= ${{ secrets.ANDROID_CLIENT_ID }} \
-          --build-arg IOS_CLIENT_ID= ${{ secrets.IOS_CLIENT_ID }} \
+          --build-arg ANDROID_CLIENT_ID=${{ secrets.ANDROID_CLIENT_ID }} \
+          --build-arg IOS_CLIENT_ID=${{ secrets.IOS_CLIENT_ID }} \
           -t ${{ secrets.DOCKER_USERNAME }}/${{ vars.DOCKER_REPO_AUTH }}:$TAG .
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ vars.DOCKER_REPO_AUTH }}:$TAG
 
