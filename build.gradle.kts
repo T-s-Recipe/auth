@@ -25,7 +25,6 @@ dependencies {
 	implementation("org.springframework.security:spring-security-crypto")
 
 	implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
-	implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
 
 	implementation("com.playtika.reactivefeign:feign-reactor-spring-cloud-starter:4.2.1")
 	implementation("io.github.resilience4j:resilience4j-spring-boot3")
