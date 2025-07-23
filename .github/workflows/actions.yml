@@ -61,3 +61,10 @@ jobs:
           chmod 600 $KUBECONFIG_PATH
           kubectl --kubeconfig=$KUBECONFIG_PATH rollout restart deployment/auth
           kubectl --kubeconfig=$KUBECONFIG_PATH rollout status deployment/auth
+
+      - name: Clean Up Docker Resources
+        if: always()
+        run: |
+          echo "Cleaning up Docker to save disk space..."
+          docker system prune -af
+          echo "Docker cleanup complete."
