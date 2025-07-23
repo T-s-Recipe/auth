@@ -4,6 +4,8 @@ WORKDIR /app
 COPY build.gradle.kts settings.gradle.kts ./
 COPY gradle ./gradle
 
+RUN gradle dependencies --build-cache || true
+
 COPY src ./src
 
 RUN gradle build --no-daemon -x test
