@@ -66,5 +66,5 @@ jobs:
         if: always()
         run: |
           echo "Cleaning up Docker to save disk space..."
-          docker system prune -af
+          docker system prune -af --volumes
           echo "Docker cleanup complete."
