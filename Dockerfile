@@ -1,13 +1,17 @@
 FROM gradle:8.5-jdk17 AS builder
 WORKDIR /app
-COPY . .
+
+COPY build.gradle.kts settings.gradle.kts ./
+COPY gradle ./gradle
+
+COPY src ./src
+
 RUN gradle build --no-daemon -x test
 
 FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 COPY src/main/resources ./resources
-
 COPY --from=builder /app/build/libs/*.jar app.jar
 
 EXPOSE 8010
