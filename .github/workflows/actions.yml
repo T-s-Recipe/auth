@@ -6,6 +6,9 @@ on:
       - main
       - develop
 
+env:
+  CACHE_DIR: ${{ github.workspace }}/.cache
+
 jobs:
   build-and-deploy:
     runs-on: self-hosted
@@ -23,6 +26,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
+      - name: Create Cache Directory
+        run: mkdir -p ${{ env.CACHE_DIR }}
+
       - name: Build and push Docker image
         run: |
           if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
@@ -32,12 +38,15 @@ jobs:
           fi
           echo "Using tag: $TAG"
 
-          docker build \
+          docker buildx build \
           --build-arg PROFILE=$TAG \
           --build-arg ANDROID_CLIENT_ID=${{ secrets.ANDROID_CLIENT_ID }} \
           --build-arg IOS_CLIENT_ID=${{ secrets.IOS_CLIENT_ID }} \
-          -t ${{ secrets.DOCKER_USERNAME }}/${{ vars.DOCKER_REPO_AUTH }}:$TAG .
-          docker push ${{ secrets.DOCKER_USERNAME }}/${{ vars.DOCKER_REPO_AUTH }}:$TAG
+          -t ${{ secrets.DOCKER_USERNAME }}/${{ vars.DOCKER_REPO_AUTH }}:$TAG \
+          --push \
+          --cache-from "type=local,src=${{ env.CACHE_DIR }}/docker" \
+          --cache-to "type=local,dest=${{ env.CACHE_DIR }}/docker,mode=max" \
+          .
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
