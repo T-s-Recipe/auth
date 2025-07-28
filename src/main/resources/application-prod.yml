@@ -42,3 +42,9 @@ oauth-provider:
       client-id: ${IOS_CLIENT_ID}
       jwks-uri: "https://appleid.apple.com/auth/keys"
       issuer: "https://appleid.apple.com"
+
+springdoc:
+  swagger-ui:
+    enabled: false
+  api-docs:
+    enabled: false
