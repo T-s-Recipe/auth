@@ -24,13 +24,13 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	implementation("org.springframework.security:spring-security-crypto")
 
+	implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.9")
+
 	implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
 
 	implementation("com.playtika.reactivefeign:feign-reactor-spring-cloud-starter:4.2.1")
 	implementation("io.github.resilience4j:resilience4j-spring-boot3")
 	implementation("io.github.resilience4j:resilience4j-reactor")
-
-	implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.6.0")
 
 	implementation("net.logstash.logback:logstash-logback-encoder:8.1")
 	implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")

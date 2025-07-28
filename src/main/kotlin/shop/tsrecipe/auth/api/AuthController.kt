@@ -1,5 +1,7 @@
 package shop.tsrecipe.auth.api
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -8,10 +10,15 @@ import shop.tsrecipe.auth.service.AuthService
 import shop.tsrecipe.auth.service.toResponse
 import shop.tsrecipe.auth.util.baseResponse
 
+@Tag(name = "Auth", description = "Auth APIs")
 @RestController
 class AuthController(
     private val authService: AuthService
 ) {
+    @Operation(
+        summary = "Sign in",
+        description = "사용자 로그인"
+    )
     @PostMapping("/sign-in")
     suspend fun signIn(@RequestBody request: SignInRequest): ResponseEntity<AuthTokenResponse> {
         return baseResponse(
@@ -19,11 +26,20 @@ class AuthController(
         )
     }
 
+    @Operation(
+        summary = "Logout",
+        description = "사용자 로그아웃"
+    )
     @PostMapping("/logout")
-    suspend fun logout(@RequestBody request: LogoutRequest) {
+    suspend fun logout(@RequestBody request: LogoutRequest): ResponseEntity<Void> {
         authService.logout(request.refreshToken)
+        return ResponseEntity.noContent().build()
     }
 
+    @Operation(
+        summary = "토큰 재발급",
+        description = "Access / Refresh 토큰 재발급"
+    )
     @PostMapping("/reissue")
     suspend fun reissueToken(@RequestBody request: TokenReissueRequest): ResponseEntity<AuthTokenResponse> {
         return baseResponse(
