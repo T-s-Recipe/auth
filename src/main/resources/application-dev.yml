@@ -1,6 +1,6 @@
 spring:
   webflux:
-    base-path: auths
+    base-path: /auths
   application:
     name: auth
   data:
