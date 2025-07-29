@@ -1,4 +1,6 @@
 spring:
+  webflux:
+    base-path: auths
   application:
     name: auth
   data:
@@ -17,7 +19,7 @@ jwt:
   secret-key: ${JWT_SECRET}
 
 external-service-url:
-  member: "http://member:8020"
+  member: "http://member"
 
 resilience4j:
   circuitbreaker:
