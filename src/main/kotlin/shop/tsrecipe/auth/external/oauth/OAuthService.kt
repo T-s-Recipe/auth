@@ -8,8 +8,6 @@ import com.auth0.jwt.interfaces.DecodedJWT
 import com.auth0.jwt.interfaces.RSAKeyProvider
 import org.springframework.stereotype.Component
 import shop.tsrecipe.auth.api.OAuthProvider
-import shop.tsrecipe.auth.exception.BaseException
-import shop.tsrecipe.auth.exception.ErrorCode
 import shop.tsrecipe.auth.properties.OAuthProperties
 import shop.tsrecipe.auth.util.Logging
 import java.net.URL
@@ -40,7 +38,7 @@ class OAuthService(
             return verifier.verify(idToken)
         } catch (e: JWTVerificationException) {
             logger.info { "Invalid ID Token. provider: ${provider.name}\n" }
-            throw BaseException(ErrorCode.ID_TOKEN_VERIFICATION_FAILED)
+            throw e
         }
     }
 
