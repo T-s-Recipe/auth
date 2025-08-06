@@ -12,10 +12,10 @@ data class SignInRequest(
     val provider: OAuthProvider,
 
     @field:Schema(description = "이름 (APPLE 최초 로그인 시 필수)")
-    val name: String?,
+    val name: String? = null,
 
     @field:Schema(description = "이메일 (APPLE 최초 로그인 시 필수)")
-    val email: String?
+    val email: String? = null
 ) {
     fun toCommand(): SignInCommand {
         return SignInCommand(

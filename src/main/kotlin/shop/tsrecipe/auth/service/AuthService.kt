@@ -21,11 +21,11 @@ class AuthService(
     private val tokenService: TokenService
 ) {
     suspend fun signIn(command: SignInCommand): TokenResult {
-        val userInfo = getVerifiedOAuthUserInfo(
+        val oAuthUserInfo = getVerifiedOAuthUserInfo(
             provider = command.oAuthProvider, token = command.idToken
         )
 
-        val member = getMemberOrThrow(provider = command.oAuthProvider, memberId = userInfo.id)
+        val member = getMemberOrThrow(provider = command.oAuthProvider, oAuthId = oAuthUserInfo.id)
 
         return issueTokensAndCaching(member.id)
     }
@@ -43,10 +43,10 @@ class AuthService(
         return userInfo
     }
 
-    private suspend fun getMemberOrThrow(provider: OAuthProvider, memberId: String): MemberResponse {
+    private suspend fun getMemberOrThrow(provider: OAuthProvider, oAuthId: String): MemberResponse {
         return memberService.getMemberByOAuthInfo(
             oAuthProvider = provider,
-            oAuthId = memberId
+            oAuthId = oAuthId
         ) ?: throw BaseException(ErrorCode.MEMBER_NOT_FOUND)
     }
 
