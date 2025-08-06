@@ -21,10 +21,9 @@ class MemberService(
     suspend fun getMemberByOAuthInfo(oAuthProvider: OAuthProvider, oAuthId: String): MemberResponse? {
         return try {
             memberClient.getMember(
-                GetMemberRequest(
-                    oAuthProvider = oAuthProvider,
-                    oAuthId = oAuthId
-                )
+                memberId = null,
+                oAuthProvider = oAuthProvider,
+                oAuthId = oAuthId
             ).awaitSingle()
         } catch (e: BaseException) {
             val expectedException = ExpectedError(httpStatus = e.httpStatus, code = e.code)

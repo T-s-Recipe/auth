@@ -14,17 +14,4 @@ class GlobalExceptionHandler: Logging {
     fun handleBaseException(e: BaseException): ResponseEntity<ErrorResponse> {
         return baseResponse(e.httpStatus, ErrorResponse(e))
     }
-
-    @ExceptionHandler(JWTVerificationException::class)
-    fun handleJwtException(e: JWTVerificationException): ResponseEntity<ErrorResponse> {
-        val errorCode = when(e) {
-            is TokenExpiredException -> ErrorCode.TOKEN_EXPIRED
-            else -> ErrorCode.INVALID_TOKEN
-        }
-
-        return baseResponse(
-            status = errorCode.status,
-            body = ErrorResponse(errorCode)
-        )
-    }
 }

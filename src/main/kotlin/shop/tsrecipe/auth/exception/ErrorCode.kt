@@ -9,9 +9,6 @@ enum class ErrorCode(val status: HttpStatus? = HttpStatus.NOT_FOUND, var message
     NOT_VERIFIED_USER(status = HttpStatus.BAD_REQUEST, message = "Is not verified user from OAuth service."),
 
     // external
-    ID_TOKEN_VERIFICATION_FAILED(status = HttpStatus.BAD_REQUEST, message = "Invalid ID Token."),
     MEMBER_NOT_FOUND(message = "Member not found."),
-    TOKEN_EXPIRED(status = HttpStatus.UNAUTHORIZED, message = "Token expired."),
-    INVALID_TOKEN(status = HttpStatus.UNAUTHORIZED, message = "Invalid token."),
     KEY_NOT_FOUND(message = "Redis key not found"),
 }

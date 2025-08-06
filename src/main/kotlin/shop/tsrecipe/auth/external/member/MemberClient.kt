@@ -1,9 +1,10 @@
 package shop.tsrecipe.auth.external.member
 
-import feign.QueryMap
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestParam
 import reactivefeign.spring.config.ReactiveFeignClient
 import reactor.core.publisher.Mono
+import shop.tsrecipe.auth.api.OAuthProvider
 import shop.tsrecipe.auth.config.MemberFeignConfig
 
 @ReactiveFeignClient(
@@ -12,6 +13,10 @@ import shop.tsrecipe.auth.config.MemberFeignConfig
     configuration = [MemberFeignConfig::class]
 )
 interface MemberClient {
-    @GetMapping
-    fun getMember(@QueryMap request: GetMemberRequest): Mono<MemberResponse>
+    @GetMapping("/")
+    fun getMember(
+        @RequestParam("memberId") memberId: String?,
+        @RequestParam("oAuthProvider") oAuthProvider: OAuthProvider?,
+        @RequestParam("oAuthId") oAuthId: String?
+    ): Mono<MemberResponse>
 }
