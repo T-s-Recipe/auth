@@ -19,7 +19,7 @@ jwt:
   secret-key: ${JWT_SECRET}
 
 external-service-url:
-  member: "http://member/members"
+  member: "http://member:8020/members"
 
 resilience4j:
   circuitbreaker:
