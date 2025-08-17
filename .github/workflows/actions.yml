@@ -31,6 +31,8 @@ jobs:
 
           docker build \
           --build-arg PROFILE=$TAG \
+          --build-arg JWT_ISSUER=${JWT_ISSUER} \
+          --build-arg JWT_SECRET=${JWT_SECRET} \
           --build-arg ANDROID_CLIENT_ID=${{ secrets.ANDROID_CLIENT_ID }} \
           --build-arg IOS_CLIENT_ID=${{ secrets.IOS_CLIENT_ID }} \
           -t ${{ secrets.DOCKER_USERNAME }}/${{ vars.DOCKER_REPO_AUTH }}:$TAG \
