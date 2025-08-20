@@ -34,14 +34,21 @@ resilience4j:
         ignore-exceptions:
           - shop.tsrecipe.auth.exception.BaseException
 
-oauth-provider:
-  provider-map:
+app-platform-properties:
+  platform:
+    android:
+      google: ${ANDROID_CLIENT_ID_GOOGLE}
+      apple: ${ANDROID_CLIENT_ID_APPLE}
+    ios:
+      google: ${IOS_CLIENT_ID_GOOGLE}
+      apple: ${IOS_CLIENT_ID_APPLE}
+
+oauth-properties:
+  provider:
     google:
-      client-id: ${ANDROID_CLIENT_ID}
       jwks-uri: "https://www.googleapis.com/oauth2/v3/certs"
       issuer: "https://accounts.google.com"
     apple:
-      client-id: ${IOS_CLIENT_ID}
       jwks-uri: "https://appleid.apple.com/auth/keys"
       issuer: "https://appleid.apple.com"
 
@@ -51,3 +58,7 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
     url: /v3/api-docs
+
+logging:
+  level:
+    org.springframework.web: DEBUG

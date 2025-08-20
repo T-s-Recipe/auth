@@ -5,9 +5,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 import reactivefeign.spring.config.EnableReactiveFeignClients
 import shop.tsrecipe.auth.properties.JwtProperties
+import shop.tsrecipe.auth.properties.AppPlatformProperties
 import shop.tsrecipe.auth.properties.OAuthProperties
 
-@EnableConfigurationProperties(value = [JwtProperties::class, OAuthProperties::class])
+@EnableConfigurationProperties(value = [JwtProperties::class, AppPlatformProperties::class, OAuthProperties::class])
 @EnableReactiveFeignClients
 @SpringBootApplication
 class AuthApplication

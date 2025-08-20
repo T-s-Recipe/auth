@@ -7,7 +7,11 @@ import com.auth0.jwt.exceptions.JWTVerificationException
 import com.auth0.jwt.interfaces.DecodedJWT
 import com.auth0.jwt.interfaces.RSAKeyProvider
 import org.springframework.stereotype.Component
+import shop.tsrecipe.auth.api.AppPlatform
 import shop.tsrecipe.auth.api.OAuthProvider
+import shop.tsrecipe.auth.exception.BaseException
+import shop.tsrecipe.auth.exception.ErrorCode
+import shop.tsrecipe.auth.properties.AppPlatformProperties
 import shop.tsrecipe.auth.properties.OAuthProperties
 import shop.tsrecipe.auth.util.Logging
 import java.net.URL
@@ -18,32 +22,29 @@ import java.util.concurrent.TimeUnit
 
 @Component
 class OAuthService(
-    oauthProperties: OAuthProperties
+    private val oauthProperties: OAuthProperties,
+    private val appPlatformProperties: AppPlatformProperties
 ) : Logging {
-    private val providerMap = oauthProperties.providerMap
     private val keyProvider = ConcurrentHashMap<String, RSAKeyProvider>()
 
-    suspend fun decodeToken(provider: OAuthProvider, idToken: String): DecodedJWT {
-        val providerDetails = providerMap[provider.name.lowercase()]!!
+    suspend fun decodeToken(platform: AppPlatform, provider: OAuthProvider, idToken: String): DecodedJWT {
+        return try {
+            val providerDetails = oauthProperties.getDetails(provider)
 
-        try {
-            val keyProvider = getKeyProvider(providerDetails)
-            val algorithm = Algorithm.RSA256(keyProvider)
-
-            val verifier = JWT.require(algorithm)
-                .withIssuer(providerDetails.issuer, providerDetails.issuer.removePrefix("https://"))
-                .withAudience(providerDetails.clientId)
-                .build()
-
-            return verifier.verify(idToken)
+            verify(
+                keyProvider = getKeyProvider(providerDetails.jwksUri),
+                clientId = appPlatformProperties.getClientId(platform, provider),
+                issuer = providerDetails.issuer,
+                idToken = idToken,
+            )
         } catch (e: JWTVerificationException) {
-            logger.info { "Invalid ID Token. provider: ${provider.name}\n" }
-            throw e
+            logger.info { "Invalid ID Token. platform: ${platform.name} / provider: ${provider.name}\n cause: ${e.cause}\n" }
+            throw BaseException(ErrorCode.INVALID_OAUTH_TOKEN)
         }
     }
 
-    private suspend fun getKeyProvider(properties: OAuthProperties.ProviderDetails): RSAKeyProvider {
-        return keyProvider.computeIfAbsent(properties.jwksUri) { uri ->
+    private suspend fun getKeyProvider(jwksUri: String): RSAKeyProvider {
+        return keyProvider.computeIfAbsent(jwksUri) { uri ->
             val jwkProvider = JwkProviderBuilder(URL(uri))
                 .cached(10, 24, TimeUnit.HOURS)
                 .build()
@@ -56,13 +57,27 @@ class OAuthService(
         }
     }
 
+    private suspend fun verify(
+        keyProvider: RSAKeyProvider,
+        clientId: String,
+        issuer: String,
+        idToken: String
+    ): DecodedJWT {
+        val algorithm = Algorithm.RSA256(keyProvider)
+
+        val verifier = JWT.require(algorithm)
+            .withIssuer(issuer, issuer.removePrefix("https://"))
+            .withAudience(clientId)
+            .build()
+
+        return verifier.verify(idToken)
+    }
+
     suspend fun getUserInfoByToken(provider: OAuthProvider, decodedJWT: DecodedJWT): OAuthUserInfo {
         return when (provider) {
             OAuthProvider.GOOGLE -> {
                 OAuthUserInfo(
                     id = decodedJWT.subject,
-                    name = decodedJWT.getClaim("name").asString(),
-                    email = decodedJWT.getClaim("email").asString(),
                     emailVerified = decodedJWT.getClaim("email_verified").asBoolean()
                 )
             }

@@ -6,7 +6,8 @@ enum class ErrorCode(val status: HttpStatus? = HttpStatus.NOT_FOUND, var message
     UNDEFINED_EXCEPTION(status = HttpStatus.INTERNAL_SERVER_ERROR, message = "Sorry, undefined exception."),
 
     // OAuth
-    NOT_VERIFIED_USER(status = HttpStatus.BAD_REQUEST, message = "Is not verified user from OAuth service."),
+    NOT_VERIFIED_USER(status = HttpStatus.BAD_REQUEST, message = "Not verified user from OAuth service."),
+    INVALID_OAUTH_TOKEN(status = HttpStatus.BAD_REQUEST, message = "Invalid OAuth token."),
 
     // external
     MEMBER_NOT_FOUND(message = "Member not found."),
