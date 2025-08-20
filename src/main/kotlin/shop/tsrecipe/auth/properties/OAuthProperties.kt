@@ -5,7 +5,7 @@ import shop.tsrecipe.auth.api.OAuthProvider
 
 @ConfigurationProperties(prefix = "oauth-properties")
 class OAuthProperties(
-    val provider: Map<String, ProviderDetails>
+    private val provider: Map<String, ProviderDetails>
 ) {
     data class ProviderDetails(
         val jwksUri: String,
