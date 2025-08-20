@@ -20,7 +20,7 @@ data class SignInRequest(
     fun toCommand(): SignInCommand {
         return SignInCommand(
             idToken = this.idToken,
-            oAuthProvider = this.provider,
+            oauthProvider = this.provider,
             name = this.name,
             email = this.email
         )

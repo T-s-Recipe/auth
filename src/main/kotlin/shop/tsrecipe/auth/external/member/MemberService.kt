@@ -18,12 +18,12 @@ class MemberService(
 ) : Logging {
 
     @CircuitBreaker(name = "member-service", fallbackMethod = "getMemberFailed")
-    suspend fun getMemberByOAuthInfo(oAuthProvider: OAuthProvider, oAuthId: String): MemberResponse? {
+    suspend fun getMemberByOAuthInfo(oauthProvider: OAuthProvider, oauthId: String): MemberResponse? {
         return try {
             memberClient.getMember(
                 memberId = null,
-                oAuthProvider = oAuthProvider,
-                oAuthId = oAuthId
+                oauthProvider = oauthProvider,
+                oauthId = oauthId
             ).awaitSingle()
         } catch (e: BaseException) {
             val expectedException = ExpectedError(httpStatus = e.httpStatus, code = e.code)

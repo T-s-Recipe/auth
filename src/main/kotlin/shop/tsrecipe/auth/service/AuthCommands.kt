@@ -5,7 +5,7 @@ import shop.tsrecipe.auth.api.AuthTokenResponse
 
 data class SignInCommand(
     val idToken: String,
-    val oAuthProvider: OAuthProvider,
+    val oauthProvider: OAuthProvider,
     val name: String?,
     val email: String?
 )

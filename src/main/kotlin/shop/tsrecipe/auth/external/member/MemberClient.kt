@@ -16,7 +16,7 @@ interface MemberClient {
     @GetMapping("/")
     fun getMember(
         @RequestParam("memberId") memberId: String?,
-        @RequestParam("oAuthProvider") oAuthProvider: OAuthProvider?,
-        @RequestParam("oAuthId") oAuthId: String?
+        @RequestParam("oauthProvider") oauthProvider: OAuthProvider?,
+        @RequestParam("oauthId") oauthId: String?
     ): Mono<MemberResponse>
 }
