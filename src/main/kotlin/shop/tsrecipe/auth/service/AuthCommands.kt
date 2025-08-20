@@ -1,13 +1,11 @@
 package shop.tsrecipe.auth.service
 
 import shop.tsrecipe.auth.api.OAuthProvider
-import shop.tsrecipe.auth.api.AuthTokenResponse
+import shop.tsrecipe.auth.api.TokenResponse
 
 data class SignInCommand(
     val idToken: String,
-    val oauthProvider: OAuthProvider,
-    val name: String?,
-    val email: String?
+    val oauthProvider: OAuthProvider
 )
 
 data class TokenResult(
@@ -15,9 +13,10 @@ data class TokenResult(
     val refreshToken: String
 )
 
-fun TokenResult.toResponse(): AuthTokenResponse {
-    return AuthTokenResponse(
+fun TokenResult.toResponse(memberId: String): TokenResponse {
+    return TokenResponse(
         accessToken = this.accessToken,
-        refreshToken = this.refreshToken
+        refreshToken = this.refreshToken,
+        memberId = memberId
     )
 }
