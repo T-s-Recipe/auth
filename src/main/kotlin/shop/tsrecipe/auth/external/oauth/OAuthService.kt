@@ -18,9 +18,9 @@ import java.util.concurrent.TimeUnit
 
 @Component
 class OAuthService(
-    oAuthProperties: OAuthProperties
+    oauthProperties: OAuthProperties
 ) : Logging {
-    private val providerMap = oAuthProperties.providerMap
+    private val providerMap = oauthProperties.providerMap
     private val keyProvider = ConcurrentHashMap<String, RSAKeyProvider>()
 
     suspend fun decodeToken(provider: OAuthProvider, idToken: String): DecodedJWT {

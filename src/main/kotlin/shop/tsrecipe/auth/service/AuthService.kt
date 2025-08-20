@@ -16,24 +16,24 @@ import shop.tsrecipe.auth.external.token.TokenType
 
 @Service
 class AuthService(
-    private val oAuthService: OAuthService,
+    private val oauthService: OAuthService,
     private val memberService: MemberService,
     private val tokenService: TokenService
 ) {
     suspend fun signIn(command: SignInCommand): TokenResult {
-        val oAuthUserInfo = getVerifiedOAuthUserInfo(
-            provider = command.oAuthProvider, token = command.idToken
+        val oauthUserInfo = getVerifiedOAuthUserInfo(
+            provider = command.oauthProvider, token = command.idToken
         )
 
-        val member = getMemberOrThrow(provider = command.oAuthProvider, oAuthId = oAuthUserInfo.id)
+        val member = getMemberOrThrow(provider = command.oauthProvider, oauthId = oauthUserInfo.id)
 
         return issueTokensAndCaching(member.id)
     }
 
     private suspend fun getVerifiedOAuthUserInfo(provider: OAuthProvider, token: String): OAuthUserInfo {
-        val userInfo = oAuthService.getUserInfoByToken(
+        val userInfo = oauthService.getUserInfoByToken(
             provider = provider,
-            decodedJWT = oAuthService.decodeToken(provider, token)
+            decodedJWT = oauthService.decodeToken(provider, token)
         )
 
         if (!userInfo.emailVerified) {
@@ -43,10 +43,10 @@ class AuthService(
         return userInfo
     }
 
-    private suspend fun getMemberOrThrow(provider: OAuthProvider, oAuthId: String): MemberResponse {
+    private suspend fun getMemberOrThrow(provider: OAuthProvider, oauthId: String): MemberResponse {
         return memberService.getMemberByOAuthInfo(
-            oAuthProvider = provider,
-            oAuthId = oAuthId
+            oauthProvider = provider,
+            oauthId = oauthId
         ) ?: throw BaseException(ErrorCode.MEMBER_NOT_FOUND)
     }
 
