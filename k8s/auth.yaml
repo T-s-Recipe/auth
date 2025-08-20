@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+        - name: auth
+          image: jh5253/tsrecipe-auth:initial
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8010
+          envFrom:
+            - secretRef:
+                name: auth-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth
+spec:
+  selector:
+    app: auth
+  ports:
+    - protocol: TCP
+      port: 8010
+      targetPort: 8010
+  type: ClusterIP

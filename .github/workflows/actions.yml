@@ -22,23 +22,13 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
-            TAG="prod"
-          else
-            TAG="dev"
-          fi
-          echo "Using tag: $TAG"
-
-          docker build \
-          --build-arg PROFILE=$TAG \
-          --build-arg JWT_ISSUER=${JWT_ISSUER} \
-          --build-arg JWT_SECRET=${JWT_SECRET} \
-          --build-arg ANDROID_CLIENT_ID=${{ secrets.ANDROID_CLIENT_ID }} \
-          --build-arg IOS_CLIENT_ID=${{ secrets.IOS_CLIENT_ID }} \
-          -t ${{ secrets.DOCKER_USERNAME }}/${{ vars.DOCKER_REPO_AUTH }}:$TAG \
-          .
+          IMAGE_TAG=${{ github.sha }}
+          IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/${{ vars.DOCKER_REPO_AUTH }}
           
-          docker push ${{ secrets.DOCKER_USERNAME }}/${{ vars.DOCKER_REPO_AUTH }}:$TAG
+          docker build -t $IMAGE_NAME:$IMAGE_TAG .
+          docker push $IMAGE_NAME:$IMAGE_TAG
+          
+          echo "IMAGE_TO_DEPLOY=$IMAGE_NAME:$IMAGE_TAG" >> $GITHUB_ENV
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
@@ -49,7 +39,23 @@ jobs:
         env:
           KUBECONFIG_PATH: ./kubeconfig
         run: |
-          kubectl rollout restart deployment/auth
+          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+            PROFILE="prod"
+          else
+            PROFILE="dev"
+          fi
+          
+          sed -e "s|__PROFILE__|$PROFILE|g" \
+              -e "s|__JWT_ISSUER__|${{ secrets.JWT_ISSUER }}|g" \
+              -e "s|__JWT_SECRET__|${{ secrets.JWT_SECRET }}|g" \
+              -e "s|__ANDROID_CLIENT_ID_GOOGLE__|${{ secrets.ANDROID_CLIENT_ID_GOOGLE }}|g" \
+              -e "s|__ANDROID_CLIENT_ID_APPLE__|${{ secrets.ANDROID_CLIENT_ID_APPLE }}|g" \
+              -e "s|__IOS_CLIENT_ID_GOOGLE__|${{ secrets.IOS_CLIENT_ID_GOOGLE }}|g" \
+              -e "s|__IOS_CLIENT_ID_APPLE__|${{ secrets.IOS_CLIENT_ID_APPLE }}|g" \
+              k8s/secret.template.yaml | kubectl apply -f -
+          
+          kubectl set image deployment/auth auth=${{ env.IMAGE_TO_DEPLOY }}
+          
           kubectl rollout status deployment/auth
 
       - name: Clean Up Docker Resources
