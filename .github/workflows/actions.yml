@@ -54,7 +54,9 @@ jobs:
               -e "s|__IOS_CLIENT_ID_APPLE__|${{ secrets.IOS_CLIENT_ID_APPLE }}|g" \
               k8s/secret.template.yaml | kubectl apply -f -
           
-          kubectl set image deployment/auth auth=${{ env.IMAGE_TO_DEPLOY }}
+          sed -i "s|image: .*|image: ${{ env.IMAGE_TO_DEPLOY }}|g" k8s/auth.yaml
+          
+          kubectl apply -f k8s/auth.yaml
           
           kubectl rollout status deployment/auth
 
