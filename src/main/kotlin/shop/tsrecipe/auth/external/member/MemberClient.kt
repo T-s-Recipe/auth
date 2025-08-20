@@ -9,7 +9,7 @@ import shop.tsrecipe.auth.config.MemberFeignConfig
 
 @ReactiveFeignClient(
     name = "member-service",
-    url = "\${external-service-url.member}",
+    url = "#{externalServiceUrl.member}",
     configuration = [MemberFeignConfig::class]
 )
 interface MemberClient {
