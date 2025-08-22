@@ -5,15 +5,12 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.springframework.stereotype.Service
 import shop.tsrecipe.auth.api.AppPlatform
-import shop.tsrecipe.auth.api.OAuthProvider
 import shop.tsrecipe.auth.api.AuthResponse
+import shop.tsrecipe.auth.api.OAuthProvider
 import shop.tsrecipe.auth.api.TokenResponse
-import shop.tsrecipe.auth.exception.BaseException
-import shop.tsrecipe.auth.exception.ErrorCode
 import shop.tsrecipe.auth.external.member.MemberResponse
 import shop.tsrecipe.auth.external.member.MemberService
 import shop.tsrecipe.auth.external.oauth.OAuthService
-import shop.tsrecipe.auth.external.oauth.OAuthUserInfo
 import shop.tsrecipe.auth.external.token.TokenService
 import shop.tsrecipe.auth.external.token.TokenType
 
@@ -24,13 +21,11 @@ class AuthService(
     private val tokenService: TokenService
 ) {
     suspend fun signIn(platform: AppPlatform, command: SignInCommand): AuthResponse {
-        val oauthUserInfo = getVerifiedOAuthUserInfo(
-            platform = platform, provider = command.oauthProvider, token = command.idToken
-        )
+        val oauthId = getOAuthUserId(platform = platform, provider = command.oauthProvider, token = command.idToken)
 
-        val response = AuthResponse(oauthId = oauthUserInfo.id)
+        val response = AuthResponse(oauthId = oauthId)
 
-        val member = getMember(provider = command.oauthProvider, oauthId = oauthUserInfo.id)
+        val member = getMember(provider = command.oauthProvider, oauthId = oauthId)
 
         if (member != null) {
             val tokens = issueTokensAndCaching(member.id)
@@ -43,21 +38,13 @@ class AuthService(
         return response
     }
 
-    private suspend fun getVerifiedOAuthUserInfo(
+    private suspend fun getOAuthUserId(
         platform: AppPlatform,
         provider: OAuthProvider,
         token: String
-    ): OAuthUserInfo {
-        val userInfo = oauthService.getUserInfoByToken(
-            provider = provider,
-            decodedJWT = oauthService.decodeToken(platform, provider, token)
-        )
-
-        if (!userInfo.emailVerified) {
-            throw BaseException(ErrorCode.NOT_VERIFIED_USER)
-        }
-
-        return userInfo
+    ): String {
+        val decodedInfo = oauthService.decodeToken(platform, provider, token)
+        return decodedInfo.subject
     }
 
     private suspend fun getMember(provider: OAuthProvider, oauthId: String): MemberResponse? {

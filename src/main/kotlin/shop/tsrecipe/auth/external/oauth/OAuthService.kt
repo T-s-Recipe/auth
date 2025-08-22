@@ -72,22 +72,4 @@ class OAuthService(
 
         return verifier.verify(idToken)
     }
-
-    suspend fun getUserInfoByToken(provider: OAuthProvider, decodedJWT: DecodedJWT): OAuthUserInfo {
-        return when (provider) {
-            OAuthProvider.GOOGLE -> {
-                OAuthUserInfo(
-                    id = decodedJWT.subject,
-                    emailVerified = decodedJWT.getClaim("email_verified").asBoolean()
-                )
-            }
-
-            OAuthProvider.APPLE -> {
-                OAuthUserInfo(
-                    id = decodedJWT.subject,
-                    emailVerified = decodedJWT.getClaim("email_verified").asString() == "true"
-                )
-            }
-        }
-    }
 }
