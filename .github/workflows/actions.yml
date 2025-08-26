@@ -10,6 +10,9 @@ jobs:
   build-and-deploy:
     runs-on: self-hosted
 
+    env:
+      SERVICE_NAME: auth
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -54,11 +57,11 @@ jobs:
               -e "s|__IOS_CLIENT_ID_APPLE__|${{ secrets.IOS_CLIENT_ID_APPLE }}|g" \
               k8s/secret.template.yaml | kubectl apply -f -
           
-          sed -i "s|image: .*|image: ${{ env.IMAGE_TO_DEPLOY }}|g" k8s/auth.yaml
+          sed -i "s|image: .*|image: ${{ env.IMAGE_TO_DEPLOY }}|g" k8s/${{ env.SERVICE_NAME }}.yaml
           
-          kubectl apply -f k8s/auth.yaml
+          kubectl apply -f k8s/${{ env.SERVICE_NAME }}.yaml
           
-          kubectl rollout status deployment/auth
+          kubectl rollout status deployment/${{ env.SERVICE_NAME }}
 
       - name: Clean Up Docker Resources
         if: always()
