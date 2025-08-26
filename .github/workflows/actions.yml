@@ -55,6 +55,7 @@ jobs:
               -e "s|__ANDROID_CLIENT_ID_APPLE__|${{ secrets.ANDROID_CLIENT_ID_APPLE }}|g" \
               -e "s|__IOS_CLIENT_ID_GOOGLE__|${{ secrets.IOS_CLIENT_ID_GOOGLE }}|g" \
               -e "s|__IOS_CLIENT_ID_APPLE__|${{ secrets.IOS_CLIENT_ID_APPLE }}|g" \
+              -e "s|__MEMBER_SERVICE_URL__|${{ secrets.MEMBER_SERVICE_URL }}|g" \
               k8s/secret.template.yaml | kubectl apply -f -
           
           sed -i "s|image: .*|image: ${{ env.IMAGE_TO_DEPLOY }}|g" k8s/${{ env.SERVICE_NAME }}.yaml
